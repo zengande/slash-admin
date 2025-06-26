@@ -1,10 +1,10 @@
-import apiClient from "../apiClient";
+import { requestClient } from "@/request";
 
 export enum DemoApi {
 	TOKEN_EXPIRED = "/user/tokenExpired",
 }
 
-const mockTokenExpired = () => apiClient.post({ url: DemoApi.TOKEN_EXPIRED });
+const mockTokenExpired = () => requestClient.post(DemoApi.TOKEN_EXPIRED);
 
 export default {
 	mockTokenExpired,
