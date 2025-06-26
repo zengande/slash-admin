@@ -3,10 +3,12 @@ export * from "./request-client";
 export * from "axios";
 
 import { GLOBAL_CONFIG } from "@/global-config";
-import userStore from "@/store/userStore";
 import { toast } from "sonner";
 import { authenticateResponseInterceptor, errorMessageResponseInterceptor, RequestClient, type RequestClientOptions } from "./request-client";
 import { useOAuthError, useWrapperResult } from "./hooks";
+import { OidcClient } from "@axa-fr/react-oidc";
+
+const getOidc = OidcClient.get;
 
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 	const client = new RequestClient({
@@ -18,7 +20,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 }
 
 export const requestClient = createRequestClient(GLOBAL_CONFIG.baseApi, {
-	// responseReturn: 'data',
+	responseReturn: "data",
 });
 
 export function initRequestClient() {
@@ -40,7 +42,9 @@ export function initRequestClient() {
 	// 请求头处理
 	requestClient.addRequestInterceptor({
 		fulfilled: async (config) => {
-			const { accessToken } = userStore.getState().userToken;
+			// Authorization
+			const oidc = getOidc();
+			const { accessToken } = oidc?.tokens ?? {};
 			if (accessToken) {
 				config.headers.Authorization = formatToken(accessToken);
 			}

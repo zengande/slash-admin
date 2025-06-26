@@ -1,11 +1,11 @@
 import { LineLoading } from "@/components/loading";
 import { GLOBAL_CONFIG } from "@/global-config";
 import DashboardLayout from "@/layouts/dashboard";
-import LoginAuthGuard from "@/routes/components/login-auth-guard";
 import { Suspense } from "react";
 import { Navigate, type RouteObject } from "react-router";
 import { backendDashboardRoutes } from "./backend";
 import { frontendDashboardRoutes } from "./frontend";
+import { OidcSecure } from "@axa-fr/react-oidc";
 
 const getRoutes = (): RouteObject[] => {
 	if (GLOBAL_CONFIG.routerMode === "frontend") {
@@ -17,11 +17,11 @@ const getRoutes = (): RouteObject[] => {
 export const dashboardRoutes: RouteObject[] = [
 	{
 		element: (
-			<LoginAuthGuard>
+			<OidcSecure>
 				<Suspense fallback={<LineLoading />}>
 					<DashboardLayout />
 				</Suspense>
-			</LoginAuthGuard>
+			</OidcSecure>
 		),
 		children: [{ index: true, element: <Navigate to={GLOBAL_CONFIG.homepage} replace /> }, ...getRoutes()],
 	},

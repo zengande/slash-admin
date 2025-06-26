@@ -13,6 +13,8 @@ import PageError from "./pages/sys/error/PageError";
 import { routesSection } from "./routes/sections";
 import { urlJoin } from "./utils";
 import { initRequestClient } from "@/request";
+import { OidcProvider } from "@axa-fr/react-oidc";
+import { configuration } from "@/oidc";
 
 initRequestClient();
 
@@ -44,5 +46,13 @@ const router = createBrowserRouter(
 	},
 );
 
+function onEvent(configuration: string, name: string, data: any) {
+	console.log("OIDC Event:", configuration, name, data);
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-root.render(<RouterProvider router={router} />);
+root.render(
+	<OidcProvider configuration={configuration} onEvent={onEvent}>
+		<RouterProvider router={router} />
+	</OidcProvider>,
+);

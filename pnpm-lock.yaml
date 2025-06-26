@@ -11,6 +11,9 @@ importers:
       '@ant-design/cssinjs':
         specifier: ^1.22.0
         version: 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@axa-fr/react-oidc':
+        specifier: ^7.25.13
+        version: 7.25.13(react@19.1.0)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -355,6 +358,17 @@ packages:
 
   '@antfu/utils@8.1.1':
     resolution: {integrity: sha512-Mex9nXf9vR6AhcXmMrlz/HVgYYZpVGJ6YlPgwl7UnaFpnshXs6EK/oa5Gpf3CzENMjkvEx2tQtntGnb7UtSTOQ==}
+
+  '@axa-fr/oidc-client-service-worker@7.25.13':
+    resolution: {integrity: sha512-xkEqu/J40o4GRutKR91fSRmEUu+sPu/vJ6OzrSKnnaovJuvJzXvGCX8dpVMYIV1q/1Wfm2753IWtE4P8IlnGhw==}
+
+  '@axa-fr/oidc-client@7.25.13':
+    resolution: {integrity: sha512-JN4UMwyyhNCWHsjsqzq8CPRS85+PcvC5fstxGBCNY750wPoJhMvPzksiNrmNs6Oc/Xf4O9xj5jidrO7RpqB1hA==}
+
+  '@axa-fr/react-oidc@7.25.13':
+    resolution: {integrity: sha512-VQbkLXt5hEj+H1RaWjffZhIS9OReWLfkOahqpN5c50BjNPYOaYnzPILAV5MvE2OiNY/a2e90NPmtBFtwVpysig==}
+    peerDependencies:
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -4402,6 +4416,18 @@ snapshots:
       tinyexec: 0.3.2
 
   '@antfu/utils@8.1.1': {}
+
+  '@axa-fr/oidc-client-service-worker@7.25.13': {}
+
+  '@axa-fr/oidc-client@7.25.13':
+    dependencies:
+      '@axa-fr/oidc-client-service-worker': 7.25.13
+
+  '@axa-fr/react-oidc@7.25.13(react@19.1.0)':
+    dependencies:
+      '@axa-fr/oidc-client': 7.25.13
+      '@axa-fr/oidc-client-service-worker': 7.25.13
+      react: 19.1.0
 
   '@babel/code-frame@7.26.2':
     dependencies:
