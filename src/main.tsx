@@ -35,7 +35,7 @@ const router = createBrowserRouter(
 		},
 	],
 	{
-		basename: GLOBAL_CONFIG.basePath,
+		basename: GLOBAL_CONFIG.publicPath,
 	},
 );
 
