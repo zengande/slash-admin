@@ -1,6 +1,20 @@
 import type { ExtensibleObject, FullAuditedEntityDto, PagedAndSortedResultRequestDto } from "./abp";
 import type { IHasConcurrencyStamp, IHasExtraProperties } from "./global";
 
+export function getFullname(user: IUser): string {
+	if (user.surname && user.name) {
+		return `${user.surname} ${user.name}`;
+	}
+	if (user.name) {
+		return user.name;
+	}
+	if (user.surname) {
+		return user.surname;
+	}
+
+	return "";
+}
+
 /** 用户对象接口 */
 interface IUser {
 	/** 邮件地址 */

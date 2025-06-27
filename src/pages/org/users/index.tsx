@@ -1,17 +1,14 @@
 import { useUsersApi } from "@/api";
-// import { USER_LIST } from "@/_mock/assets";
 import { Icon } from "@/components/icon";
 import PageHeader from "@/components/page-header";
 import { usePathname, useRouter } from "@/routes/hooks";
-import type { TableParams } from "@/types/antd";
-import type { IdentityUserDto } from "@/types/users";
+import { type IdentityUserDto, getFullname } from "@/types/users";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
 import { Table } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { BasicStatus } from "#/enum";
 
 const { getPagedListApi } = useUsersApi();
 
@@ -21,13 +18,8 @@ export default () => {
 	const pathname = usePathname();
 
 	const [users, setUsers] = useState<IdentityUserDto[]>([]);
+	const [totalCount, setTotalCount] = useState(0);
 	const [loading, setLoading] = useState(false);
-	const [tableParams, setTableParams] = useState<TableParams>({
-		pagination: {
-			current: 1,
-			pageSize: 10,
-		},
-	});
 
 	const columns: ColumnsType<IdentityUserDto> = [
 		{
@@ -38,20 +30,48 @@ export default () => {
 				return (
 					<div className="flex">
 						<img alt="" src={record.avatar} className="h-10 w-10 rounded-full" />
-						<div className="ml-2 flex flex-col">
-							<span className="text-sm">{record.userName}</span>
-							<span className="text-xs text-text-secondary">{record.email}</span>
+						<div className="py-1 ml-2 flex flex-col justify-between">
+							<span className="text-sm">{getFullname(record)}</span>
+							<span className="text-xs text-text-secondary">{record.userName}</span>
 						</div>
 					</div>
 				);
 			},
 		},
 		{
+			title: "Email",
+			dataIndex: "email",
+			width: 200,
+			render: (email) => <span className="text-sm">{email}</span>,
+		},
+		{
+			title: "Phone",
+			dataIndex: "phoneNumber",
+			width: 150,
+			render: (phoneNumber, record) => (
+				<div className="flex items-center gap-x-1">
+					<span className="text-sm">{phoneNumber || "-"}</span>
+					{record.phoneNumberConfirmed && (
+						<Badge variant="success" className="text-xs">
+							<Icon icon="solar:check-bold-duotone" size={14} />
+						</Badge>
+					)}
+				</div>
+			),
+		},
+		{
+			title: "Two Factor Enabled",
+			dataIndex: "twoFactorEnabled",
+			align: "center",
+			width: 150,
+			render: (twoFactorEnabled) => <Badge variant={twoFactorEnabled ? "success" : "warning"}>{twoFactorEnabled ? "Yes" : "No"}</Badge>,
+		},
+		{
 			title: "Status",
-			dataIndex: "status",
+			dataIndex: "isActive",
 			align: "center",
 			width: 120,
-			render: (status) => <Badge variant={status === BasicStatus.DISABLE ? "error" : "success"}>{status === BasicStatus.DISABLE ? "Disable" : "Enable"}</Badge>,
+			render: (isActive) => <Badge variant={isActive ? "success" : "error"}>{isActive ? "Active" : "Inactive"}</Badge>,
 		},
 		{
 			title: "Action",
@@ -74,41 +94,27 @@ export default () => {
 		},
 	];
 
-	const fetchData = () => {
+	const fetchData = (skipCount = 0, maxResultCount = 10) => {
 		setLoading(true);
 
 		getPagedListApi({
-			maxResultCount: tableParams.pagination?.pageSize,
-			skipCount: ((tableParams.pagination?.current || 1) - 1) * (tableParams.pagination?.pageSize || 10),
-			sorting: tableParams.sortField ? `${tableParams.sortField} ${tableParams.sortOrder}` : undefined,
+			maxResultCount,
+			skipCount,
 		}).then((rsp) => {
-			console.log("rsp", rsp);
 			setUsers(rsp.items);
+			setTotalCount(rsp.totalCount);
 			setLoading(false);
-			setTableParams({
-				...tableParams,
-				pagination: {
-					...tableParams.pagination,
-					total: rsp.totalCount,
-				},
-			});
 		});
 	};
 
 	useEffect(fetchData, []);
 
-	const handleTableChange: TableProps<IdentityUserDto>["onChange"] = (pagination, filters, sorter) => {
-		setTableParams({
-			pagination,
-			filters,
-			sortOrder: Array.isArray(sorter) ? undefined : sorter.order,
-			sortField: Array.isArray(sorter) ? undefined : sorter.field,
-		});
+	const handleTableChange: TableProps<IdentityUserDto>["onChange"] = (pagination) => {
+		const { current = 1, pageSize = 10 } = pagination;
+		const maxResultCount = pageSize;
+		const skipCount = (current - 1) * (pageSize || 10);
 
-		// `dataSource` is useless since `pageSize` changed
-		if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-			setUsers([]);
-		}
+		fetchData(skipCount, maxResultCount);
 	};
 
 	return (
@@ -135,7 +141,7 @@ export default () => {
 					scroll={{ x: "max-content" }}
 					columns={columns}
 					dataSource={users}
-					pagination={tableParams.pagination}
+					pagination={{ total: totalCount }}
 					loading={loading}
 					onChange={handleTableChange}
 				/>
