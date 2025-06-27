@@ -29,7 +29,7 @@ interface WrapResult<T> {
 interface ExtensibleObject {
 	[key: string]: any;
 	/** 扩展属性 */
-	extraProperties: ExtraPropertyDictionary;
+	extraProperties?: ExtraPropertyDictionary;
 }
 /** 实体数据传输对象 */
 interface EntityDto<TPrimaryKey> {

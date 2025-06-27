@@ -1,5 +1,6 @@
 import { useOrganizationUnitsApi } from "@/api";
 import { Icon } from "@/components/icon";
+import LoadingOverlay from "@/components/loading-overlay";
 import PageHeader from "@/components/page-header";
 import type { TreeNode } from "@/components/tree";
 import { useSet } from "@/hooks/use-set";
@@ -71,11 +72,7 @@ export default () => {
 	const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
 	const expandedKeys = useSet<string>([]);
 
-	const {
-		//loading: isLoadingRootDepartment,
-		treeData,
-		getTreeNodes,
-	} = useOrganizationUnitTreeState();
+	const { loading: isLoadingRootDepartment, treeData, getTreeNodes } = useOrganizationUnitTreeState();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -104,7 +101,7 @@ export default () => {
 	};
 
 	return (
-		<div className="w-full h-full max-w-full max-h-full overflow-hidden flex flex-col gap-y-8">
+		<div className="w-full h-full max-w-full max-h-full overflow-hidden flex flex-col">
 			<PageHeader>
 				<PageHeader.Content>
 					<PageHeader.Title>
@@ -117,13 +114,9 @@ export default () => {
 			</PageHeader>
 			<div className="flex gap-8 w-full flex-1 overflow-hidden">
 				<div className="flex flex-col border-r overflow-hidden w-80 min-w-80">
-					<div className="flex gap-x-0.5 w-full items-center justify-start px-4 pb-4"></div>
+					<div className="flex gap-x-0.5 w-full items-center justify-start px-4 pb-4" />
 					<ScrollArea className="flex-1 w-full max-w-full px-4 relative">
-						{/* <LoadingOverlay
-              visible={isLoadingRootDepartment}
-              zIndex={1000}
-              overlayProps={{ radius: 'sm', blur: 2 }}
-            /> */}
+						<LoadingOverlay visible={isLoadingRootDepartment} />
 						<OrganizationUnitTree
 							onSelect={onSelect}
 							onLoadData={loadChildDepartments}
@@ -142,7 +135,7 @@ export default () => {
 							<div className="flex flex-col h-full pt-12">
 								<Icon icon="local:arrow-1" height="100" width="200" stroke="var(--mantine-color-gray-5)" />
 								<span className="pl-5 text-gray-600 text-sm">
-									<Trans t={t}>pages.departments.noselected</Trans>
+									<Trans t={t}>organization_units.page.noselected</Trans>
 								</span>
 							</div>
 						)}

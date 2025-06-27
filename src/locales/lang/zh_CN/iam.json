@@ -1,0 +1,23 @@
+{
+	"users": {
+		"page": {
+			"header": {
+				"title": "成员管理",
+				"description": "系统内所有用户，在这里你可以对用户进行统一管理。",
+				"actions": {
+					"add": "成员入职"
+				}
+			}
+		}
+	},
+	"organization_units": {
+		"page": {
+			"header": {
+				"title": "组织管理",
+				"description": "维护组织内多层级部门，并管理成员的部门隶属关系。"
+			},
+
+			"noselected": "选择部门来管理成员"
+		}
+	}
+}

@@ -10,12 +10,12 @@ import type { ColumnsType, TableProps } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 
-const { getPagedListApi } = useUsersApi();
-
 export default () => {
 	const { t } = useTranslation();
 	const { push } = useRouter();
 	const pathname = usePathname();
+
+	const { getPagedListApi } = useUsersApi();
 
 	const [users, setUsers] = useState<IdentityUserDto[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
@@ -49,13 +49,9 @@ export default () => {
 			dataIndex: "phoneNumber",
 			width: 150,
 			render: (phoneNumber, record) => (
-				<div className="flex items-center gap-x-1">
+				<div className="flex items-center gap-x-0.5">
 					<span className="text-sm">{phoneNumber || "-"}</span>
-					{record.phoneNumberConfirmed && (
-						<Badge variant="success" className="text-xs">
-							<Icon icon="solar:check-bold-duotone" size={14} />
-						</Badge>
-					)}
+					{record.phoneNumberConfirmed && <Icon icon="solar:verified-check-line-duotone" size={18} className="text-primary!" />}
 				</div>
 			),
 		},

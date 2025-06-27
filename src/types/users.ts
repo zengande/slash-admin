@@ -1,5 +1,6 @@
 import type { ExtensibleObject, FullAuditedEntityDto, PagedAndSortedResultRequestDto } from "./abp";
 import type { IHasConcurrencyStamp, IHasExtraProperties } from "./global";
+import type { OrganizationUnitDto } from "./organization-units";
 
 export function getFullname(user: IUser): string {
 	if (user.surname && user.name) {
@@ -105,6 +106,10 @@ interface UserLookupCountInput {
 
 interface UserLookupSearchInput extends PagedAndSortedResultRequestDto, UserLookupCountInput {}
 
+interface UserIncludeOrganizationUnitsDto extends IdentityUserDto {
+	OrganizationUnits: OrganizationUnitDto[];
+}
+
 export type {
 	ChangeMyPasswordInput,
 	ChangeUserPasswordInput,
@@ -115,4 +120,5 @@ export type {
 	IdentityUserUpdateDto,
 	UserLookupCountInput,
 	UserLookupSearchInput,
+	UserIncludeOrganizationUnitsDto,
 };

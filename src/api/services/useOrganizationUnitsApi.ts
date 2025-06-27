@@ -2,8 +2,8 @@ import type { ListResultDto, PagedResultDto } from "@/types/abp";
 
 import type {
 	GetIdentityRolesInput,
-	GetIdentityUsersInput,
 	GetOrganizationUnitPagedListInput,
+	GetOrganizationUnitUsersInput,
 	GetUnaddedRoleListInput,
 	GetUnaddedUserListInput,
 	OrganizationUnitAddRoleDto,
@@ -14,7 +14,7 @@ import type {
 	OrganizationUnitUpdateDto,
 } from "@/types/organization-units";
 import type { IdentityRoleDto } from "@/types/roles";
-import type { IdentityUserDto } from "@/types/users";
+import type { IdentityUserDto, UserIncludeOrganizationUnitsDto } from "@/types/users";
 
 import { useRequest } from "@/request";
 
@@ -116,8 +116,8 @@ export function useOrganizationUnitsApi() {
 	 * @param input 查询过滤参数
 	 * @returns 用户实体数据传输对象分页列表
 	 */
-	function getUserListApi(id: string, input?: GetIdentityUsersInput): Promise<PagedResultDto<IdentityUserDto>> {
-		return request<PagedResultDto<IdentityUserDto>>(`/api/am/organization-unit/${id}/users`, {
+	function getUserListApi(id: string, input?: GetOrganizationUnitUsersInput): Promise<PagedResultDto<UserIncludeOrganizationUnitsDto>> {
+		return request<PagedResultDto<UserIncludeOrganizationUnitsDto>>(`/api/am/organization-unit/${id}/users`, {
 			method: "GET",
 			params: input,
 		});

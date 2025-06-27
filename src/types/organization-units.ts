@@ -1,4 +1,4 @@
-import type { AuditedEntityDto, PagedAndSortedResultRequestDto } from "./abp";
+import type { AuditedEntityDto, ExtensiblePagedAndSortedResultRequestDto, PagedAndSortedResultRequestDto } from "./abp";
 
 import type { GetUserPagedListInput } from "./users";
 
@@ -80,6 +80,12 @@ interface OrganizationUnitAddRoleDto {
 	roleIds: string[];
 }
 
+interface GetOrganizationUnitUsersInput extends ExtensiblePagedAndSortedResultRequestDto {
+	onlyDirectMembers?: boolean;
+	includeDetails?: boolean;
+	filter?: string;
+}
+
 export type {
 	GetIdentityRolesInput,
 	GetIdentityUsersInput,
@@ -94,4 +100,5 @@ export type {
 	OrganizationUnitDto,
 	OrganizationUnitGetChildrenDto,
 	OrganizationUnitUpdateDto,
+	GetOrganizationUnitUsersInput,
 };
