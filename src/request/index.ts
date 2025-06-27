@@ -19,7 +19,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 	return client;
 }
 
-export const requestClient = createRequestClient(GLOBAL_CONFIG.baseApi, {
+export const requestClient = createRequestClient(GLOBAL_CONFIG.apiBaseUrl, {
 	// responseReturn: "data",
 });
 
