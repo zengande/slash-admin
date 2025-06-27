@@ -147,6 +147,29 @@
 				"403": "403",
 				"404": "404",
 				"500": "500"
+			},
+
+			"org": {
+				"index": "组织成员",
+				"users": "成员管理",
+				"organization_units": "组织与部门"
+			},
+
+			"permissions": {
+				"index": "权限",
+				"spaces": "权限空间",
+				"roles": "角色管理",
+				"menu_resources": "菜单资源权限"
+			},
+
+			"openiddict": {
+				"index": "OpenIddict",
+				"applications": "应用管理"
+			},
+
+			"platform": {
+				"index": "平台",
+				"settings": "系统设置"
 			}
 		},
 		"docs": "文档",

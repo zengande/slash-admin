@@ -1,30 +1,23 @@
 import "./global.css";
 import "./theme/theme.css";
 import "./locales/i18n";
+import { configuration } from "@/oidc";
+import { initRequestClient } from "@/request";
+import { OidcProvider } from "@axa-fr/react-oidc";
 import ReactDOM from "react-dom/client";
 import { ErrorBoundary } from "react-error-boundary";
 import { Outlet, RouterProvider, createBrowserRouter } from "react-router";
 import App from "./App";
-import { worker } from "./_mock";
 import menuService from "./api/services/menuService";
 import { registerLocalIcons } from "./components/icon";
 import { GLOBAL_CONFIG } from "./global-config";
 import PageError from "./pages/sys/error/PageError";
 import { routesSection } from "./routes/sections";
-import { urlJoin } from "./utils";
-import { initRequestClient } from "@/request";
-import { OidcProvider } from "@axa-fr/react-oidc";
-import { configuration } from "@/oidc";
 
 initRequestClient();
 
 await registerLocalIcons();
-await worker.start({
-	onUnhandledRequest: "bypass",
-	serviceWorker: {
-		url: urlJoin(GLOBAL_CONFIG.basePath, "mockServiceWorker.js"),
-	},
-});
+
 if (GLOBAL_CONFIG.routerMode === "backend") {
 	await menuService.getMenuList();
 }

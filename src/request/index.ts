@@ -3,10 +3,10 @@ export * from "./request-client";
 export * from "axios";
 
 import { GLOBAL_CONFIG } from "@/global-config";
-import { toast } from "sonner";
-import { authenticateResponseInterceptor, errorMessageResponseInterceptor, RequestClient, type RequestClientOptions } from "./request-client";
-import { useOAuthError, useWrapperResult } from "./hooks";
 import { OidcClient } from "@axa-fr/react-oidc";
+import { toast } from "sonner";
+import { useOAuthError, useWrapperResult } from "./hooks";
+import { RequestClient, type RequestClientOptions, authenticateResponseInterceptor, errorMessageResponseInterceptor } from "./request-client";
 
 const getOidc = OidcClient.get;
 
@@ -20,7 +20,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 }
 
 export const requestClient = createRequestClient(GLOBAL_CONFIG.baseApi, {
-	responseReturn: "data",
+	// responseReturn: "data",
 });
 
 export function initRequestClient() {
