@@ -148,7 +148,7 @@ const TreeNodeItem = ({ current, level, expandedKeys, selectedKey, renderMoreMen
 
 					<span className="flex-1 truncate ... text-sm font-medium">{current.title} </span>
 				</div>
-				{renderMoreMenu && renderMoreMenu(current, currentSeleted)}
+				{renderMoreMenu?.(current, currentSeleted)}
 			</div>
 
 			<AnimatePresence initial={false}>
