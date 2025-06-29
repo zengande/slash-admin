@@ -3,10 +3,12 @@ import { Icon } from "@/components/icon";
 import PageHeader from "@/components/page-header";
 import type { TreeNodeWithData } from "@/components/tree";
 import type { OrganizationUnitDto } from "@/types/organization-units";
+import { Button } from "@/ui/button";
 import { ScrollArea } from "@/ui/scroll-area";
 import { useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import MemberOnboardingDialog from "../components/member-onboarding-dialog";
 import OrganizationUnitMemberSelectionDialog from "./member-selection-dialog";
 import OrganizationUnitMemberTable, { type OrganizationUnitMemberTableRef } from "./member-table";
 import OrganizationUnitTree from "./organization-unit-tree";
@@ -19,7 +21,8 @@ export default () => {
 	const tableRef = useRef<OrganizationUnitMemberTableRef>(null);
 
 	const [selectedNode, setSelectedNode] = useState<TreeNodeWithData<OrganizationUnitDto> | null>(null);
-	const [addMemberDialogOpened, setAddMemberDialogOpened] = useState<boolean>();
+	const [addMemberDialogOpened, setAddMemberDialogOpen] = useState<boolean>();
+	const [onboardingDialogOpened, setOnboardingDialogOpen] = useState<boolean>(false);
 
 	// 部门切换时
 	const onSelect = (node: TreeNodeWithData<OrganizationUnitDto>) => {
@@ -31,7 +34,7 @@ export default () => {
 			userIds,
 		})
 			.then(() => {
-				setAddMemberDialogOpened(false);
+				setAddMemberDialogOpen(false);
 				toast.success("Users added");
 			})
 			.finally(() => {
@@ -51,6 +54,13 @@ export default () => {
 							<Trans t={t}>organization_units.page.header.description</Trans>
 						</PageHeader.Description>
 					</PageHeader.Content>
+					<PageHeader.Actions>
+						<div className="flex items-center gap-2">
+							<Button variant="secondary" onClick={() => setOnboardingDialogOpen(true)}>
+								Member onboarding
+							</Button>
+						</div>
+					</PageHeader.Actions>
 				</PageHeader>
 				<div className="flex gap-8 w-full flex-1 overflow-hidden">
 					<div className="flex flex-col border-r overflow-hidden w-80 min-w-80">
@@ -65,7 +75,7 @@ export default () => {
 								<OrganizationUnitMemberTable
 									ref={tableRef}
 									organizationUnit={selectedNode?.data as OrganizationUnitDto}
-									onAddMember={() => setAddMemberDialogOpened(true)}
+									onAddMember={() => setAddMemberDialogOpen(true)}
 								/>
 							) : (
 								<div className="flex flex-col h-full pt-12">
@@ -81,10 +91,17 @@ export default () => {
 			</div>
 			<OrganizationUnitMemberSelectionDialog
 				opened={addMemberDialogOpened}
-				onOpenChange={setAddMemberDialogOpened}
+				onOpenChange={setAddMemberDialogOpen}
 				organizationUnit={selectedNode?.data as OrganizationUnitDto}
 				onSubmit={handleAddMembers}
 			/>
+			{onboardingDialogOpened && (
+				<MemberOnboardingDialog
+					opened={true}
+					onClose={() => setOnboardingDialogOpen(false)}
+					selectedOrganizationUnits={[selectedNode?.data as OrganizationUnitDto]}
+				/>
+			)}
 		</>
 	);
 };

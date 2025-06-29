@@ -1,3 +1,4 @@
+import type { OrganizationUnitDto } from "@/types/organization-units";
 import type { IdentityUserCreateDto } from "@/types/users";
 import { Button } from "@/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/ui/dialog";
@@ -6,6 +7,7 @@ import { Input } from "@/ui/input";
 import { Switch } from "antd";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import OrganizationUnitSelect from "./organization-unit-select";
 
 interface MemberOnboardingDialogProps {
 	opened?: boolean;
@@ -14,13 +16,14 @@ interface MemberOnboardingDialogProps {
 	/**
 	 * The ID of the organization for which the member onboarding is being done.
 	 */
-	selectedOrganizationUnitIds?: string[];
+	selectedOrganizationUnits?: OrganizationUnitDto[];
 }
 
-const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDialogProps) => {
-	const form = useForm<IdentityUserCreateDto>({
+const MemberOnboardingDialog = ({ selectedOrganizationUnits = [], opened = false, onClose }: MemberOnboardingDialogProps) => {
+	const form = useForm<IdentityUserCreateDto & { organizationUnits: OrganizationUnitDto[] }>({
 		defaultValues: {
 			shouldChangePasswordOnNextLogin: true,
+			organizationUnits: selectedOrganizationUnits,
 		},
 	});
 
@@ -37,7 +40,7 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 				</DialogHeader>
 
 				<Form {...form}>
-					<div className="grid grid-cols-2 gap-x-4 gap-y-6">
+					<div className="grid grid-cols-2 gap-x-4 gap-y-6 py-2">
 						<FormField
 							control={form.control}
 							name="userName"
@@ -45,34 +48,23 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 								<FormItem className="">
 									<FormLabel className="text-right">Username</FormLabel>
 									<FormControl>
-										<Input {...field} />
+										<Input {...field} placeholder="Please enter username" />
 									</FormControl>
 								</FormItem>
 							)}
 						/>
-						{/* <FormField
+						<FormField
 							control={form.control}
-							name="departments"
+							name="organizationUnits"
 							render={({ field }) => (
 								<FormItem className="">
 									<FormLabel className="text-right">Departments</FormLabel>
 									<FormControl>
-										<Select
-											tabIndex={-1}
-											className="pointer-events-none"
-											variant="filled"
-											showSearch={false}
-											mode="tags"
-											open={false}
-											{...field}
-											onClick={(e) => {
-												console.log("sdf");
-											}}
-										/>
+										<OrganizationUnitSelect {...field} />
 									</FormControl>
 								</FormItem>
 							)}
-						/> */}
+						/>
 						<div className="grid grid-cols-2 gap-x-2">
 							<FormField
 								control={form.control}
@@ -81,7 +73,7 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 									<FormItem className="">
 										<FormLabel className="text-right">Name</FormLabel>
 										<FormControl>
-											<Input {...field} />
+											<Input {...field} placeholder="Please enter name" />
 										</FormControl>
 									</FormItem>
 								)}
@@ -93,7 +85,7 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 									<FormItem className="">
 										<FormLabel className="text-right">Surname</FormLabel>
 										<FormControl>
-											<Input {...field} />
+											<Input {...field} placeholder="Please enter surname" />
 										</FormControl>
 									</FormItem>
 								)}
@@ -106,7 +98,7 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 								<FormItem className="">
 									<FormLabel className="text-right">Email address</FormLabel>
 									<FormControl>
-										<Input {...field} />
+										<Input {...field} placeholder="Please enter email address" />
 									</FormControl>
 								</FormItem>
 							)}
@@ -118,7 +110,7 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 								<FormItem className="">
 									<FormLabel className="text-right">Phone number</FormLabel>
 									<FormControl>
-										<Input {...field} />
+										<Input {...field} placeholder="Please enter phone number" />
 									</FormControl>
 								</FormItem>
 							)}
@@ -127,10 +119,10 @@ const MemberOnboardingDialog = ({ opened = false, onClose }: MemberOnboardingDia
 							control={form.control}
 							name="password"
 							render={({ field }) => (
-								<FormItem className="">
+								<FormItem className="col-start-1">
 									<FormLabel className="text-right">Password</FormLabel>
 									<FormControl>
-										<Input type="password" {...field} />
+										<Input type="password" {...field} placeholder="Please enter password" />
 									</FormControl>
 								</FormItem>
 							)}
