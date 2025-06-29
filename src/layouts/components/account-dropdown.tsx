@@ -1,4 +1,6 @@
+import { Icon } from "@/components/icon";
 import { GLOBAL_CONFIG } from "@/global-config";
+import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Button } from "@/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/dropdown-menu";
 import { useOidc, useOidcUser } from "@axa-fr/react-oidc";
@@ -23,12 +25,22 @@ export default function AccountDropdown() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" size="icon" className="rounded-full">
-					<img className="h-6 w-6 rounded-full" src="" alt="" />
+					<Avatar className="size-6">
+						<AvatarImage src="" />
+						<AvatarFallback>
+							<Icon icon="lucide:user-round" />
+						</AvatarFallback>
+					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56">
 				<div className="flex items-center gap-2 p-2">
-					<img className="h-10 w-10 rounded-full" src="" alt="" />
+					<Avatar className="size-10">
+						<AvatarImage src="" />
+						<AvatarFallback>
+							<Icon icon="lucide:user-round" />
+						</AvatarFallback>
+					</Avatar>
 					<div className="flex flex-col items-start">
 						<div className="text-text-primary text-sm font-medium">
 							{name} {family_name}

@@ -1,6 +1,7 @@
 import { useUsersApi } from "@/api";
 import { Icon } from "@/components/icon";
 import PageHeader from "@/components/page-header";
+import { Persona } from "@/components/persona";
 import { usePathname, useRouter } from "@/routes/hooks";
 import { type IdentityUserDto, getFullname } from "@/types/users";
 import { Badge } from "@/ui/badge";
@@ -27,15 +28,7 @@ export default () => {
 			dataIndex: "name",
 			width: 300,
 			render: (_, record) => {
-				return (
-					<div className="flex">
-						<img alt="" src={record.avatar} className="h-10 w-10 rounded-full" />
-						<div className="py-1 ml-2 flex flex-col justify-between">
-							<span className="text-sm">{getFullname(record)}</span>
-							<span className="text-xs text-text-secondary">{record.userName}</span>
-						</div>
-					</div>
-				);
+				return <Persona size="lg" avatarSrc={record.avatar} nickname={getFullname(record)} username={record.userName} />;
 			},
 		},
 		{

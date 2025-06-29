@@ -1,9 +1,74 @@
+import { useOrganizationUnitsApi } from "@/api";
 import { Icon } from "@/components/icon";
-import type { TreeNode, TreeProps } from "@/components/tree";
+import LoadingOverlay from "@/components/loading-overlay";
+import type { TreeNode, TreeNodeWithData } from "@/components/tree";
 import Tree from "@/components/tree";
+import { useSet } from "@/hooks/use-set";
+import type { OrganizationUnitDto } from "@/types/organization-units";
 import { cn } from "@/utils";
 import { Button, Dropdown, type MenuProps } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const { getRootListApi, getChildrenApi } = useOrganizationUnitsApi();
+
+const toTreeNode = (item: OrganizationUnitDto): TreeNodeWithData<OrganizationUnitDto> => ({
+	key: item.id,
+	title: `[${item.code}] ${item.displayName}`,
+	parentId: item.parentId || null,
+	children: undefined,
+	data: item,
+});
+
+const addChildrenToTree = (
+	tree: TreeNodeWithData<OrganizationUnitDto>[],
+	parentId: string,
+	children: TreeNodeWithData<OrganizationUnitDto>[],
+): TreeNodeWithData<OrganizationUnitDto>[] => {
+	if (typeof parentId === "undefined" || parentId === "" || parentId === null) return children;
+	return tree.map((node) => {
+		if (node.key === parentId) {
+			node.children = children;
+		} else if (node.children) {
+			node.children = addChildrenToTree(node.children, parentId, children);
+		}
+		return node;
+	});
+};
+
+const useOrganizationUnitTreeState = () => {
+	const [loading, setLoading] = useState<boolean>(false);
+	const [treeData, setTreeData] = useState<TreeNodeWithData<OrganizationUnitDto>[]>([]);
+
+	const getTreeNodes = async (parentId?: string): Promise<TreeNodeWithData<OrganizationUnitDto>[]> => {
+		let tree: TreeNodeWithData<OrganizationUnitDto>[] = [];
+
+		if (parentId) {
+			const data = await getChildrenApi({ id: parentId });
+			const children = data?.items.map(toTreeNode);
+			tree = addChildrenToTree(treeData, parentId, children || []);
+			setTreeData(tree);
+		} else {
+			// load root orgs
+			setLoading(true);
+
+			try {
+				const data = await getRootListApi();
+				tree = data?.items.map(toTreeNode) ?? [];
+				setTreeData(tree);
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		return tree;
+	};
+
+	return {
+		loading,
+		treeData,
+		getTreeNodes,
+	};
+};
 
 interface OrganizationUnitNodeActions {
 	onAdd?: (node: TreeNode) => void;
@@ -49,31 +114,45 @@ const MoreMenu = ({ item }: MoreMenuProps) => {
 };
 
 interface OrganizationUnitTreeProps {
-	treeData?: TreeNode[];
-
 	selectedKey?: string;
-	expandedKeys?: Set<string>;
 
-	onLoadData?: (node: TreeNode) => Promise<void>;
-	onExpand?: (node: TreeNode, expanded: boolean) => void;
 	onSelect?: (node: TreeNode) => void;
 }
 
-const OrganizationUnitTree = ({
-	treeData,
-	selectedKey,
-	expandedKeys,
-	onSelect,
-	onLoadData,
-	onExpand,
-	onAdd,
-	onEdit,
-	onDelete,
-}: OrganizationUnitTreeProps & TreeProps & OrganizationUnitNodeActions) => {
+const OrganizationUnitTree = ({ selectedKey, onSelect, onAdd, onEdit, onDelete }: OrganizationUnitTreeProps & OrganizationUnitNodeActions) => {
+	const expandedKeys = useSet<string>([]);
+	const { loading: isLoadingRootDepartment, treeData, getTreeNodes } = useOrganizationUnitTreeState();
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		getTreeNodes().then((tree) => {
+			const first = tree.at(0);
+			first && onSelect?.(first);
+		});
+	}, []);
+
+	// 处理展开/折叠操作
+	const onExpand = (node: TreeNodeWithData<OrganizationUnitDto>, expanded: boolean) => {
+		if (expanded) {
+			expandedKeys.add(node.key);
+		} else {
+			expandedKeys.delete(node.key);
+		}
+	};
+
+	// 加载子部门列表
+	const loadChildDepartments = async ({ key }: TreeNodeWithData<OrganizationUnitDto>) => {
+		await getTreeNodes(key);
+	};
+
+	if (isLoadingRootDepartment) {
+		return <LoadingOverlay visible />;
+	}
+
 	return (
 		<Tree
 			onSelect={onSelect}
-			onLoadData={onLoadData}
+			onLoadData={loadChildDepartments}
 			onExpand={onExpand}
 			selectedKey={selectedKey}
 			expandedKeys={expandedKeys}

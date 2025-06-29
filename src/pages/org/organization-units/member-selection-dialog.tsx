@@ -1,13 +1,13 @@
 import { useOrganizationUnitsApi } from "@/api";
 import Empty from "@/components/empty";
+import { Icon } from "@/components/icon";
 import LoadingOverlay from "@/components/loading-overlay";
+import { Persona } from "@/components/persona";
 import type { OrganizationUnitDto } from "@/types/organization-units";
 import { type IdentityUserDto, getFullname } from "@/types/users";
-import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Button } from "@/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { Input } from "@/ui/input";
-import { UserIcon, X } from "lucide-react";
 import { type ChangeEvent, useEffect, useState } from "react";
 import { useDebounce } from "react-use";
 
@@ -46,7 +46,7 @@ const OrganizationUnitMemberSelectionDialog = ({ organizationUnit, opened, onOpe
 	};
 
 	const doSearch = async () => {
-		if (organizationUnit) {
+		if (organizationUnit && opened) {
 			setLoading(true);
 			setUsers([]);
 			try {
@@ -114,16 +114,7 @@ const OrganizationUnitMemberSelectionDialog = ({ organizationUnit, opened, onOpe
 													onClick={() => handleItemSelectedChange(user, !checked)}
 												>
 													<input type="checkbox" checked={checked} readOnly={true} className={checked ? "border-blue-600" : "border-gray-400"} />
-													<Avatar className="w-8 h-8">
-														<AvatarImage src={user.avatar} />
-														<AvatarFallback>
-															<UserIcon className="w-4 h-4 stroke-gray-500" />
-														</AvatarFallback>
-													</Avatar>
-													<div className="">
-														<h2>{getFullname(user)}</h2>
-														<span className="text-xs text-gray-600">{user.userName}</span>
-													</div>
+													<Persona avatarSrc={user.avatar} nickname={getFullname(user)} username={user.userName} />
 												</div>
 											);
 										})}
@@ -144,19 +135,13 @@ const OrganizationUnitMemberSelectionDialog = ({ organizationUnit, opened, onOpe
 									</div>
 									<div className="flex-1 overflow-auto">
 										{selectedUsers.map((user) => (
-											<div key={user.id} className="flex items-center gap-x-2 text-sm rounded p-2 cursor-pointer hover:bg-gray-100 transition-colors group">
-												<Avatar className="w-8 h-8">
-													<AvatarImage src={user.avatar} />
-													<AvatarFallback>
-														<UserIcon className="w-4 h-4 stroke-gray-500" />
-													</AvatarFallback>
-												</Avatar>
-												<div className="flex-1">
-													<h2>{user.nickname}</h2>
-													<p className="text-xs text-gray-500">{user.userName}</p>
-												</div>
-												<Button className="hidden group-hover:block" variant="link" onClick={() => handleItemSelectedChange(user, false)}>
-													<X className="w-4 h-4 text-gray-500" />
+											<div
+												key={user.id}
+												className="flex items-center justify-between gap-x-2 text-sm rounded p-2 cursor-pointer hover:bg-gray-100 transition-colors group"
+											>
+												<Persona avatarSrc={user.avatar} nickname={getFullname(user)} username={user.userName} />
+												<Button className="hidden group-hover:block" variant="ghost" onClick={() => handleItemSelectedChange(user, false)}>
+													<Icon icon="lucide:x" className="size-4" />
 												</Button>
 											</div>
 										))}
