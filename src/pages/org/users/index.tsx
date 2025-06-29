@@ -139,8 +139,7 @@ export default () => {
 					/>
 				</div>
 			</div>
-
-			<MemberOnboardingDialog opened={onboardingDialogOpened} onClose={() => setOnboardingDialogOpen(false)} />
+			{onboardingDialogOpened && <MemberOnboardingDialog opened={true} onClose={() => setOnboardingDialogOpen(false)} />}
 		</>
 	);
 };

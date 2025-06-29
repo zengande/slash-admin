@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/ui/form";
 import { Input } from "@/ui/input";
 import { Switch } from "antd";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import OrganizationUnitSelect from "./organization-unit-select";
 
@@ -26,11 +25,6 @@ const MemberOnboardingDialog = ({ selectedOrganizationUnits = [], opened = false
 			organizationUnits: selectedOrganizationUnits,
 		},
 	});
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		form.reset();
-	}, [opened]);
 
 	return (
 		<Dialog defaultOpen={false} open={opened} onOpenChange={(open) => !open && onClose?.()}>
