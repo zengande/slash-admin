@@ -10,6 +10,7 @@ import { Table } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import MemberOnboardingDialog from "../components/member-onboarding-dialog";
 
 export default () => {
 	const { t } = useTranslation();
@@ -21,6 +22,7 @@ export default () => {
 	const [users, setUsers] = useState<IdentityUserDto[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
 	const [loading, setLoading] = useState(false);
+	const [onboardingDialogOpened, setOnboardingDialogOpen] = useState<boolean>(false);
 
 	const columns: ColumnsType<IdentityUserDto> = [
 		{
@@ -107,34 +109,38 @@ export default () => {
 	};
 
 	return (
-		<div>
-			<PageHeader>
-				<PageHeader.Content>
-					<PageHeader.Title>
-						<Trans t={t}>users.page.header.title</Trans>
-					</PageHeader.Title>
-					<PageHeader.Description>
-						<Trans t={t}>users.page.header.description</Trans>
-					</PageHeader.Description>
-				</PageHeader.Content>
-				<PageHeader.Actions>
-					<Button>
-						<Trans t={t}>users.page.header.actions.add</Trans>
-					</Button>
-				</PageHeader.Actions>
-			</PageHeader>
+		<>
 			<div>
-				<Table
-					rowKey="id"
-					size="small"
-					scroll={{ x: "max-content" }}
-					columns={columns}
-					dataSource={users}
-					pagination={{ total: totalCount }}
-					loading={loading}
-					onChange={handleTableChange}
-				/>
+				<PageHeader>
+					<PageHeader.Content>
+						<PageHeader.Title>
+							<Trans t={t}>users.page.header.title</Trans>
+						</PageHeader.Title>
+						<PageHeader.Description>
+							<Trans t={t}>users.page.header.description</Trans>
+						</PageHeader.Description>
+					</PageHeader.Content>
+					<PageHeader.Actions>
+						<Button onClick={() => setOnboardingDialogOpen(true)}>
+							<Trans t={t}>users.page.header.actions.add</Trans>
+						</Button>
+					</PageHeader.Actions>
+				</PageHeader>
+				<div>
+					<Table
+						rowKey="id"
+						size="small"
+						scroll={{ x: "max-content" }}
+						columns={columns}
+						dataSource={users}
+						pagination={{ total: totalCount }}
+						loading={loading}
+						onChange={handleTableChange}
+					/>
+				</div>
 			</div>
-		</div>
+
+			<MemberOnboardingDialog opened={onboardingDialogOpened} onClose={() => setOnboardingDialogOpen(false)} />
+		</>
 	);
 };
